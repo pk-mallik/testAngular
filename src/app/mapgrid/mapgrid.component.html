@@ -1,0 +1,125 @@
+<div class="container">
+  <div class="card">
+    <div *ngIf="!showMap" class="card-body">
+      <h4>Fetching Data</h4>
+    </div>
+    <div>
+        {{zoom}}
+    </div>
+    <div style="background-color: coral;margin-bottom: 20px;">Coords: {{infoLabel}}</div>
+
+    <div *ngIf="showMap" class="card-body">
+      <div
+        class="col-md-3"
+        style="position: absolute; z-index: 99; margin-top: 5px;"
+      >
+        <div class="row">
+          <select
+            class="col-md-9 form-control"
+            (change)="changeMapType($event)"
+          >
+            <option *ngFor="let mapType of mapTypeList" [value]="mapType.value">{{ mapType.typeOfMap }}</option>
+          </select>
+          <div class="col-md-3">
+            <button
+              type="button"
+              style="width: 40px; height: 30px;"
+              (click)="getRectangleData()"
+            ></button>
+          </div>
+        </div>
+      </div>
+      <agm-map
+        [latitude]="latitude"
+        [longitude]="longitude"
+        [zoom]="zoom"
+        [fullscreenControl]="true"
+        [mapTypeId]="selectedMapType"
+        (zoomChange)="onZoomChange($event)"
+        (mapReady)="onMapReady($event)"
+        [styles]="mapStyle"
+        >
+<!--        <agm-circle
+          *ngFor="let tMarker of clientDisplay"
+          [latitude]="tMarker.Locations.latitude"
+          [longitude]="tMarker.Locations.longitude"
+          [fillOpacity]="0.25"
+          [fillColor]="'blue'"
+          [radius]="tMarker.CellularRadius"
+          [visible]="zoom >= 10"
+        ></agm-circle>
+
+
+                        <agm-circle [latitude]="latitude" [longitude]="longitude"
+                    [radius]="1000" [fillColor]="'blue'"
+                    [fillOpacity]=".25" [strokeColor]="'red'" [strokeOpacity]="1" [strokeWeight]="2"
+                    >
+                </agm-circle>
+            -->
+        <agm-marker *ngFor="let tMarker of clientDisplay"
+        [latitude]="tMarker.Locations.latitude"
+          [longitude]="tMarker.Locations.longitude"
+          [iconUrl]="icon"
+          [label]="{color:textColor,text: 'ALMD DKDKDK', fontSize: '12px', fontWeight: 'bold', fontFamily: 'Arial, sans-serif'}"
+        ></agm-marker>
+<!--                <agm-rectangle *ngIf="drawRectangle"
+                [visible]= "true" [fillColor]= "color" [fillOpacity]= 0.5
+                [editable]= "true" [rectangleDraggable]= "true" (dragEnd)= "dragChange($event)"
+                (boundsChange)= "boundsChange($event)"></agm-rectangle                >
+
+
+                <agm-marker-cluster [maxZoom]=19>
+                    <agm-marker *ngFor="let tMarker of markers" [latitude]="tMarker.Latitude"
+                        [longitude]="tMarker.Longitude">
+                        <agm-info-window #infowindow>
+                            <div>
+                                Tracker Id: {{tMarker.TrackerID}}
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-sm btn-primary"></button>
+                            </div>
+                        </agm-info-window>
+                    </agm-marker>
+                </agm-marker-cluster>
+            -->
+      </agm-map>
+      <!---
+        <div class="loaded-content" style="padding-left:2%">
+            <table cellspacing="0">
+                <tr>
+                    <td class="col-md-3" style="padding-right: 10px;padding-left: 0;"> <button type="btn btn-primary"
+                            class="btn btn-primary atButton" (click)="onExportClick()">Export</button></td>
+                </tr>
+                <tr>
+                    <ag-grid-angular style="width:calc(100% - 10px); height: 500px; margin-left: 15px;"
+                        class="ag-theme-balham" [pagination]="true" [rowData]="gridMarkers" [gridOptions]="gridOptions"
+                        (gridReady)="onGridReady($event)" (filterChanged)="onFilterChanged($event)">
+                    </ag-grid-angular>
+                </tr>
+            </table>
+        </div>
+-->
+<!--    <div class="card-body">
+      <div class="row">
+        <ag-grid-angular
+          style="width: calc(100% - 30px); height: 500px;"
+          class="ag-theme-balham"
+          [pagination]="true"
+          [rowData]="gridMarkers"
+          [gridOptions]="gridOptions"
+          (filterChanged)="onFilterChanged($event)"
+        ></ag-grid-angular>
+
+        <ag-grid-angular
+          style="width: calc(100% - 10px); height: 500px; margin-left: 15px;"
+          class="ag-theme-balham"
+          [pagination]="true"
+          [rowData]="gridMarkers"
+          [gridOptions]="gridOptions"
+          (gridReady)="onGridReady($event)"
+          (filterChanged)="onFilterChanged($event)"
+        ></ag-grid-angular>
+      </div>
+    </div>
+  </div>-->
+</div>

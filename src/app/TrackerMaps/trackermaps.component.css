@@ -1,0 +1,7 @@
+agm-map {
+  height: 500px;
+}
+
+input[type=search]::-webkit-search-cancel-button {
+  -webkit-appearance: searchfield-cancel-button;
+}

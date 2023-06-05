@@ -1,0 +1,83 @@
+<div class="container">
+  <div class="card">
+    <div class="spinner-overlay" *ngIf="showSpinner">
+      <div class="spinner-spinner-wrapper">
+        Wait....
+      </div>
+    </div>
+
+    <div class="col-md-7">
+      <ng-multiselect-dropdown
+        style="width: 90%;"
+        [placeholder]="'Locations tag'"
+        [settings]="dropdownSettings"
+        [data]="locationTags"
+        (onSelect)="onItemSelect($event)"
+        (onDeSelect)="onDeSelect($event)"
+        (onSelectAll)="onSelectAll($event)"
+        (onDeSelectAll)="onDeSelectAll($event)"
+      ></ng-multiselect-dropdown>
+      <div class="col-md-4">
+        <button>Show Fence</button>
+      </div>
+    </div>
+    <hr />
+    <div class="col-md-7">
+      <input
+        type="text"
+        class="form-control"
+        (keydown.enter)="$event.preventDefault()"
+        placeholder="Search Location"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="off"
+        type="text"
+        #search
+      />
+    </div>
+    <div class="card">
+      <div class="col-md-12">
+        <agm-map
+          style="height: 800px;"
+          [latitude]="latitude"
+          [longitude]="longitude"
+          [zoom]="zoom"
+          [fullscreenControl]="true"
+          [fitBounds]="bounds"
+          [mapTypeId]="selectedMapType"
+          (centerChange)="centerChange($event)"
+          (mapReady)="onMapReady($event)"
+          (mapClick)="onMapClicked($event)"
+          >
+          <agm-marker
+            *ngFor="let tMarker of clientData"
+            [latitude]="tMarker.Locations.Latitude"
+            [longitude]="tMarker.Locations.Longitude"
+            [iconUrl]="getLocationIcon(tMarker.LocationType)"
+            (markerClick)="showGeofence(tMarker)"
+          ></agm-marker>
+
+          <agm-circle *ngIf="currMarker && currMarker.paths == null" 
+            [latitude]="currMarker.Locations.Latitude"
+            [longitude]="currMarker.Locations.Longitude"
+            [fillOpacity]="0.75"
+            [fillColor]="'green'"
+            [radius]="10000"
+            [editable]="true"
+            (radiusChange)="onPathChange($event)"
+          ></agm-circle>
+          <agm-polygon  *ngIf="currMarker && currMarker.paths" 
+            [fillColor]="'blue'"
+            [fillOpacity]="0.5" [paths]="currMarker.paths"
+            [strokeColor]="'red'" [strokeOpacity]="0.6" [strokeWeight]="2"
+            [polyDraggable]="true"
+            [editable]="true"
+            (polyPathsChange)="onPathChange($event)"
+            (polyDragEnd)="onPathChange($event)"
+            [zIndex]=1
+            [visible]="true" [zIndex]="1"></agm-polygon>
+        </agm-map>
+      </div>
+    </div>
+  </div>
+</div>

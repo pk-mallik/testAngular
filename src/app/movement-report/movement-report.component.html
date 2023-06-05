@@ -1,0 +1,107 @@
+<div class="card mx-auto w-100 shadow p-3 mb-3 bg-body rounded">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="row col-md-8" style="margin-left: 4px">
+                        <label for="forDate"> Date Range &nbsp;</label>
+                        <input id="forDate" type="datetime-local">&nbsp;&nbsp;
+                        <input type="datetime-local">
+                </div>
+                <div class="col-md-4">
+                    <label for="location"> Location &nbsp;</label>
+                    <input id="location" type="text">
+                </div>
+            </div>
+            <div class="row" style="margin-top: 4px;">
+                <div class="col-md-4">
+                    <label for="client"> Client &nbsp;</label>
+                    <input id="client" placeholder="Search Client" />
+                </div>
+                <div class="col-md-4">
+                    <label for="Tracker"> Tracker&nbsp; </label>
+                    <input id="Tracker" placeholder="Search Trackers" />
+                </div>
+                <div class="col-md-4">
+                    <label for="consignment"> Consignment &nbsp;</label>
+                    <input id="consignment" type="text">
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-2">
+                    <select (change)="changeException($event)">
+                        <option value="" selected>Select Exception State</option>
+                        <option *ngFor="let exception of ExceptionList">{{exception}}</option>
+                    </select>
+                </div>
+                <div class="col-md-4"  
+                    [style.visibility]="exceptionListValue.length > 0 ? 'visible': 'hidden'">
+                    <select (change)="onChange($event)">
+                        <option *ngFor="let exceptionValue of exceptionListValue">{{exceptionValue}}</option>
+                    </select>
+                </div>
+                <div class="col-md-4"  >
+                <label for="typeMap"> Map Type &nbsp;</label>
+                <select id="typeMap" (change)="changeMapType($event)">
+                    <option [selected]="selectedMapType==='roadmap'">roadmap</option>
+                    <option [selected]="selectedMapType==='hybrid'">hybrid</option>
+                    <option [selected]="selectedMapType==='satellite'">satellite</option>
+                    <option [selected]="selectedMapType==='terrain'">terrain</option>
+                </select>
+            </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-md-8" style="border: 1px aquamarine solid; background-color: lightblue;">
+                    <agm-map [latitude]="latitude" [longitude]="longitude" [zoom]="zoom" [fullscreenControl]="true"
+                        [fitBounds]="bounds" (zoomChange)="onZoomChanged($event)" 
+                        [mapTypeId]="selectedMapType">
+                        <agm-circle *ngFor="let tMarker of markers" [latitude]="tMarker.Latitude"
+                            [longitude]="tMarker.Longitude" [fillColor]="tMarker.color" [radius]="circleRadius"
+                            [fillOpacity]="1" [strokeColor]="'black'" [strokeOpacity]="1" [strokeWeight]="1"
+                            [visible]="tMarker.isVisible" (circleClick)="markerClick(tMarker)">
+                        </agm-circle>
+                    </agm-map>
+                </div>
+                <div class="col-md-4" style="margin-top: 4px;">
+                    <button type="btn btn-primary atButton" class="btn btn-warning btn-sm me-3">Find</button>&nbsp;
+                    <button type="btn btn-primary atButton" class="btn btn-warning btn-sm me-3"
+                        (click)="onRefresh()">Refresh</button>&nbsp;
+                    <input style="display: none" type="file" accept=".json" (change)="onFileChanged($event)" #fileInput>
+                    <button type="btn btn-primary" class="btn btn-warning btn-sm me-3"
+                        (click)="fileInput.click()">Select File</button>
+                    <div>&nbsp;</div>
+                    <div *ngIf="showMarkerData">
+                        <div *ngIf="markerData">Origin: {{markerData.Origin}}</div>
+                        <div>&nbsp;</div>
+                        <div *ngIf="markerData">Temperature: {{markerData.Temperature}}</div>
+                        <div>&nbsp;</div>
+                        <div *ngIf="markerData">Date Event: {{markerData.DateEvent}}</div>
+                        <div>&nbsp;</div>
+                        <div *ngIf="markerData">Tracker ID: {{markerData.TrackerID}}</div>
+                        <div>&nbsp;</div>
+                        <div *ngIf="markerData">Asset ID: {{markerData.AssetID}}</div>
+                        <div>&nbsp;</div>
+                        <div *ngIf="markerData">Battery Level : {{markerData.BatteryLevel}}</div>
+                        <div>&nbsp;</div>
+                        <div *ngIf="markerData">Position Type: {{markerData.PositionType}}</div>
+                        <div>&nbsp;</div>
+                        <div *ngIf="markerData">Model: {{markerData.Model}}</div>
+                        <div>&nbsp;</div>
+                        <div *ngIf="markerData">Battery State: {{markerData.BatteryState}}</div>
+                        <div>&nbsp;</div>
+                        <div *ngIf="markerData">Battery Voltage: {{markerData.BatteryVoltage}}</div>
+                        <div>&nbsp;</div>
+                        <div *ngIf="markerData">Latitude: {{markerData.Latitude}}</div>
+                        <div>&nbsp;</div>
+                        <div *ngIf="markerData">Longitude: {{markerData.Longitude}}</div>
+                        <div *ngIf="markerData">
+                            <button type="button" class="btn btn-primary" style="margin-left:165px"
+                                (click)="navigate(markerData)">Navigate</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

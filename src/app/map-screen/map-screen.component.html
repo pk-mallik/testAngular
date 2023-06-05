@@ -1,0 +1,82 @@
+<h1>Welcome to the AT AGM Map Test Screen</h1>
+
+<button
+  style="margin: 50px; padding: 10px"
+  type="button"
+  class="btn btn-primary"
+  (click)="openPopup()">Show Data
+</button>
+
+<button
+  style="margin: 50px; padding: 10px"
+  type="button"
+  class="btn btn-primary"
+  (click)="showMarkers()">Show Data
+</button>
+
+<div
+  class="modal"
+  tabindex="-1"
+  role="dialog"
+  [ngStyle]="{'display':displayStyle}">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">RM2 Locations</h4>
+      </div>
+      <div class="modal-body">
+        <p>Component to manage locations</p>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger"
+                (click)="closePopup()">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="d-flex mb-3">
+  <div class="col col-md-4" style="background-color: '#99999';">
+    <label for="typeMap"> Select Map Type </label>
+    <select  (change)="changeMapType($event)">
+      <option *ngFor="let mType of mapTypeList" value="{{mType.typeOfMap}}"
+        [selected]="mType.typeOfMap===mapSettings.mapType">
+        {{mType.typeOfMap}}</option>
+    </select>
+    <div>
+      <input type="file" class="file-upload" (change)="onFileLoad($event)" />
+    </div>
+    <div>
+      <select (change)="changeExceptionType($event)">
+        <option [selected]="selectedException==='Select...'">Select...</option>
+        <option [selected]="selectedException==='Temperature'">Temperature</option>
+        <option [selected]="selectedException==='Battery Level'">Battery Level</option>
+      </select>
+      <select [style.visibility]="exceptionsList.length > 0?'visible' : 'hidden'" (change)="changeException($event)">
+        <option *ngFor="let mExc of exceptionsList" [selected]="mExc===selectedVal">
+          {{mExc}}</option>
+      </select>
+      &nbsp;
+      <p>Info: {{infoLabel}}</p>
+    </div>
+  </div>
+  <div class="col-md-8" style="background-color: '#999999';">
+    <agm-map class="agm-map" [latitude]="mapSettings.center.lat" [longitude]="mapSettings.center.lng"
+      [mapTypeId]="mapSettings.mapType" [fullscreenControl]="true" [fitBounds]="bounds"
+      (zoomChange)="onZoomChanged($event)">
+      <agm-marker *ngFor="let tMarker of markers" [latitude]="tMarker.Latitude" [longitude]="tMarker.Longitude"
+        [visible]="tMarker.isVisible"
+        [label]="{
+          color: 'white',
+          fontFamily: '',
+          fontSize: '14px',
+          fontWeight: 'bold',
+          text: tMarker.LocationName}"
+        >
+      </agm-marker>
+    </agm-map>
+  </div>
+</div>

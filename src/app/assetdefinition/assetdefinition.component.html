@@ -1,0 +1,43 @@
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-5">
+                <!-- <select class="form-control" [(ngModel)]="selectedAssetID">
+                <option value="" selected>Select Asset ID</option>
+                <option *ngFor="let assetID of AssetIDList">{{assetID}}</option>
+            </select> -->
+            <ng-multiselect-dropdown style="width: 100%;" [placeholder]="'Select Asset'" [settings]="dropdownSettings"
+          [data]="assetDropdown" (onSelect)="onItemSelect($event)" (onDeSelect)="onItemDeSelect($event)">
+        </ng-multiselect-dropdown>
+            </div>
+            <div class="col-md-2" style="margin-top: -9px;">
+                <button class="btn btn-primary" type="button" (click)="addAsset()"><i class="fa fa-plus"></i></button>
+             </div>
+            <!-- <div class="col-md-7">
+                <input type="text" placeholder="Name" #name>
+            </div> -->
+        </div>
+        <br>
+        <div class="row">
+            <h6>Attributes</h6>
+            <button class="btn btn-primary btn-sm" (click)="onAddRow()">Add Row</button>
+        </div>
+        <div class="row">
+            <ag-grid-angular
+            style="width:calc(100% - 30px); height: 150px;"
+            class="ag-theme-balham"
+            [pagination]="true"
+            (gridReady)="onGridReady($event)"
+            [frameworkComponents]="frameworkComponents"
+            (cellValueChanged)="onCellValueChanged($event)"
+            [rowData]="assetGridData"
+            #agGridDataTable
+            [columnDefs]="columnDefs">
+            </ag-grid-angular>
+        </div>
+        <br>
+        <div class="row" style="margin-left: 807px;">
+           <button type="button" class="btn btn-primary" (click)="saveModifiedRows()">Save</button>
+        </div>
+    </div>
+</div>

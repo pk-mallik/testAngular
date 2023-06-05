@@ -1,0 +1,5 @@
+<p>Test Control Attribute</p>
+
+<select [(ngModel)]="currentEnterprise" (change)="onEnterpriseChange($event)"> 
+    <option *ngFor="let ent of enterpriseList" [value]="ent.EnterpriseID">{{ent.Name}}</option> 
+</select> 

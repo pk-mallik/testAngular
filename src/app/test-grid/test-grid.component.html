@@ -1,0 +1,32 @@
+<div class="container">
+    <div style="width:50%">
+            <ng-multiselect-dropdown
+            [settings]="dropdownSettings"
+            [data]="dropdownList"
+            [(ngModel)] = "selectedItems">
+        </ng-multiselect-dropdown>
+    </div>
+</div>
+
+
+<p>Trying to Map Grid</p>
+<div class="col-md-3" style="margin-top: -15px;">
+    <button type="button" class="btn btn-primary" (click)="fetchData()">Fetch</button>
+</div>
+
+<div class="col-md-3">
+    <input  [(ngModel)] = "mapRet">
+</div>
+<app-mapgrid [showMap]="showMap" [gridMarkers]="trackerList" (customerChange)="shapeParam($event)"></app-mapgrid>
+
+
+<p>Trying to Test Grid</p>
+<div class="col-md-6 row">
+    <div class="col-md-4">
+        <input style="display: none" type="file" accept=".json" (change)="onFileChanged($event)" #fileInput>
+        <button type="btn btn-primary" class="btn btn-warning btn-sm me-3" (click)="fileInput.click()">Select
+            File</button>
+    </div>
+
+
+</div>

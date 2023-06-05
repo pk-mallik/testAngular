@@ -1,0 +1,240 @@
+<div class="card">
+  <div class="card-body">
+    <div class="spinner-overlay" *ngIf="showSpinner">
+      <div class="spinner-spinner-wrapper">
+        <app-spinner></app-spinner>
+      </div>
+    </div>
+    <div [class.blurred]="showSpinner">
+      <div class="row">
+        <div class="col-md-4">
+
+          Tracker : <input (blur)="onBlurMethod()" (search)="clearData()" [(ngModel)]="trackerId" name="trackerId">
+        </div>
+        <div class="col-md-2" style="max-width: 117px;">
+          Date Range:
+        </div>
+        <div class="col-md-3" style="margin-top: -5px;">
+          <input [disabled]="trackerId === ''" type="datetime-local" class="form-control" [(ngModel)]="currentStartDate"
+            name="currentStartDate">
+        </div>
+        <div class="col-md-3" style="margin-top: -5px;">
+          <input [disabled]="trackerId === ''" type="datetime-local" class="form-control" [(ngModel)]="currentEndDate"
+            name="currentEndDate">
+        </div>
+      </div>
+      <div>&nbsp;</div>
+      <div class="row">
+        <div class="col-md-4">
+          <select [disabled]="trackerId !== ''" class="form-control" (change)="onClientChange($event.target.value)">
+            <option value="" selected>Select Client</option>
+            <option *ngFor="let client of clientData" [value]="client.ClientID">{{client.ClientName}}</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <select [disabled]="trackerId !== ''" class="form-control" (change)="onTypeChange($event.target.value)">
+            <option value="" selected>Select Origin</option>
+            <option *ngFor="let type of TypeList">{{type}}</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <select class="form-control" [disabled]="trackerId !== ''" (change)="onProfileChange($event.target.value)">
+            <option value="" selected>Select Profile</option>
+            <option *ngFor="let profile of profileData" [value]="profile.name">{{profile.name}}</option>
+          </select>
+        </div>
+      </div>
+      <div>&nbsp;</div>
+      <div class="row">
+        <div class="col-md-4">
+          <input type="text" class="form-control" placeholder="Select Model"
+            (change)="onModelChange($event.target.value)" [disabled]="trackerId !== ''"
+            (keyup)="getUserIdsFirstWay($event)" id="userIdFirstWay" list="dynmicUserIds" />
+          <datalist id="dynmicUserIds">
+            <option *ngFor="let item of modelData" [value]="item.id">{{item.id}}</option>
+          </datalist>
+        </div>
+        <div class="col-md-4" style="margin-top: -10px;">
+          <button type="button" class="btn btn-primary atButton" (click)="fetchData()">Search</button>
+        </div>
+        <div class="col-md-4">
+          <div style="border: 1px solid grey;" class="form-control">
+            <!-- <ng-multiselect-dropdown style="width: 90%;" [placeholder]="'Client Locations'" [settings]="dropdownSettings"
+            [data]="clientData" (onSelect)="onItemSelect($event)" (onDeSelect)="onDeSelect($event)"
+            (onSelectAll)="onSelectAll($event)" (onDeSelectAll)="onSelectAll($event)">
+          </ng-multiselect-dropdown> -->
+            <ng-multiselect-dropdown style="width: 90%;" [placeholder]="'Client Locations'"
+              [settings]="dropdownSettings" [data]="clientData" (onSelect)="onItemSelect($event)"
+              (onDeSelect)="onDeSelect($event)" (onSelectAll)="onSelectAll($event)"
+              (onDeSelectAll)="onDeSelectAll($event)">
+            </ng-multiselect-dropdown>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div *ngIf="showMap" [class.blurred]="showSpinner">
+      <hr />
+    </div>
+    <div class="row" style="margin-top:15px">
+      <div class="col-md-6">
+        <div class="card">
+          <input type="text" class="form-control" (keydown.enter)="$event.preventDefault()"
+            placeholder="Search Location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #search>
+        </div>
+      </div>
+    </div>
+    <!-- <div *ngIf="showRectangleButton">
+      <button type="button" class="btn btn-primary atButton" (click)="fetchRectangleData()">Search Drawn Area</button>
+    </div> -->
+    <div *ngIf="showMap"  class="row" [class.blurred]="showSpinner">
+      <div class="card-body">
+        <div class="col-md-3" style="position: absolute; z-index: 99;margin-top: 5px;">
+          <div class="row">
+            <select class="col-md-9 form-control" (change)="changeMapType($event.target.value)">
+              <option *ngFor="let mapType of MapTypeList">{{mapType}}</option>
+            </select>
+            <div *ngIf="showRectangle" class="col-md-2">
+              <button type="button" style="
+              width: 40px;
+              height: 30px;" (click)="getRectangleData()"></button>
+            </div>
+          </div>
+        </div>
+
+        <agm-map [latitude]="latitude" [longitude]="longitude" [zoom]="zoom" [fullscreenControl]="true"
+          [fitBounds]="bounds" [mapTypeId]="selectedMapType" (centerChange)="centerChange($event)"
+          (mapReady)="onMapReady($event)">
+          <agm-marker-cluster *ngIf="trackerId === ''" [maxZoom]=19 >
+            <agm-marker *ngFor="let tMarker of data" [latitude]="tMarker.Latitude" [longitude]="tMarker.Longitude"
+              (markerClick)="onMarkerClicked(tMarker, infowindow)">
+              <agm-info-window #infowindow>
+                <div style="padding-top: 15px;">
+                  <div>
+                    <b>Device:</b>{{tMarker.TrackerID}}&nbsp;&nbsp;<span (click)="copyData(tMarker)"><i title="Copy"
+                        class="fa fa-copy"></i></span>
+                  </div>
+                  <div>
+                    <b>Tracker Type:</b>{{tMarker.Origin}}
+                  </div>
+                  <div>
+                    <b>Time:</b>{{tMarker.EventTime | date: 'dd/MM/yyyy hh:mm:ss'}}
+                  </div>
+                  <div>
+                    <b>Address:</b>{{tMarker.address}}
+                  </div>
+                  &nbsp;
+                  <div>
+                    <button type="button" class="btn btn-primary atButton"
+                      (click)="navigate(markerClickedData)">Navigate</button>
+                    <!-- &nbsp;
+                    <button *ngIf="trackerId === ''" type="button" class="btn btn-primary atButton"
+                      (click)="journey(markerClickedData)">Journey</button> -->
+                  </div>
+                </div>
+              </agm-info-window>
+            </agm-marker>
+          </agm-marker-cluster>
+          <agm-marker *ngFor="let tMarker of latLngData; let i = index" [visible]="trackerId !== ''" [latitude]="tMarker.Latitude"
+            [longitude]="tMarker.Longitude" (markerClick)="onMarkerClicked(tMarker, infowindow)">
+            <agm-info-window #infowindow>
+              <div style="padding-top: 15px;">
+                <div>
+                  <b>Device:</b>{{tMarker.TrackerID}}&nbsp;&nbsp;<span (click)="copyData(tMarker)"><i title="Copy"
+                      class="fa fa-copy"></i></span>
+                </div>
+                <div>
+                  <b>Tracker Type:</b>{{tMarker.Origin}}
+                </div>
+                <div>
+                  <b>Time:</b>{{tMarker.EventTime | date: 'dd/MM/yyyy hh:mm:ss'}}
+                </div>
+                <div>
+                  <b>Address:</b>{{tMarker.address}}
+                </div>
+                &nbsp;
+                <div>
+                  <button type="button" class="btn btn-primary atButton"
+                    (click)="navigate(markerClickedData)">Navigate</button>
+                  &nbsp;
+                  <button *ngIf="trackerId === ''" type="button" class="btn btn-primary atButton"
+                    (click)="journey(markerClickedData)">Journey</button>
+                </div>
+              </div>
+            </agm-info-window>
+          </agm-marker>
+          <agm-polyline *ngIf="trackerId !== ''" [visible]="true" [strokeWeight]="3" [strokeColor]="'#07b57a'">
+            <agm-polyline-point *ngFor="let coordinate of latlng; let i=index" [latitude]="coordinate[0]"
+              [longitude]="coordinate[1]">
+            </agm-polyline-point>
+            <agm-icon-sequence [strokeColor]="'#07b57a'" [offset]="'50%'" [scale]="4" [path]="'FORWARD_CLOSED_ARROW'">
+            </agm-icon-sequence>
+          </agm-polyline>
+          <agm-rectangle *ngIf="drawRectangle" [north]="directionObject.north" [south]="directionObject.south"
+            [east]="directionObject.east" [west]="directionObject.west" [visible]="true" [fillColor]="color"
+            [fillOpacity]=0.5 [editable]="true" [rectangleDraggable]="true" (dragEnd)="dragChange($event)"
+            (boundsChange)="boundsChange($event)">
+          </agm-rectangle>
+
+          <agm-marker *ngFor="let tMarker of clientDisplay" [latitude]="tMarker.Locations.latitude"
+            [longitude]="tMarker.Locations.longitude"  [iconUrl]="
+            {
+              url: '../assets/img/ATImages/red-circle.png',
+              scaledSize: {
+                  width: 12,
+                  height: 12
+              }
+          }" (markerClick)="onMarkerClicked(tMarker, infowindow)" [fillColor]="'blue'">
+            <agm-info-window #infowindow>
+              <div style="padding-top: 15px;">
+                <div>
+                  <b>Client Name:</b>{{tMarker.ClientName}}
+                </div>
+                <div>
+                  <b>Client ID:</b>{{tMarker.ClientID}}
+                </div>
+                <div>
+                  <b>Location Name:</b>{{tMarker.Locations.name}}
+                </div>
+                <div>
+                  <b>Location Type:</b>{{tMarker.LocationType}}
+                </div>
+                &nbsp;
+              </div>
+            </agm-info-window>
+          </agm-marker>
+
+          <agm-circle *ngFor="let tMarker of clientDisplay" [latitude]="tMarker.Locations.latitude"
+            [longitude]="tMarker.Locations.longitude" [fillOpacity]="0.25" [fillColor]="'blue'"
+            [radius]= "tMarker.CellularRadius">
+          </agm-circle>
+        </agm-map>
+
+      </div>
+    </div>
+    <div *ngIf="showGrid" [class.blurred]="showSpinner">
+      <hr />
+    </div>
+    <div class="row" [class.blurred]="showSpinner">
+      <div class="col-md-12" *ngIf="searchGrid" [visible]="trackerId === ''">
+        <button type="button" class="btn btn-primary atButton" style="margin-left: 15px;"
+          (click)="onExportClick()">Export</button>
+        <ag-grid-angular style="width:calc(100% - 30px); height: 500px; margin-left: 15px;" class="ag-theme-balham"
+          [pagination]="true" [enableCellTextSelection]="true" [rowData]="gridMarkers" [gridOptions]="gridOptions"
+          [rowSelection]="rowSelection" (selectionChanged)="onSelectionChanged($event)"
+          (filterChanged)="onFilterChanged($event)">
+        </ag-grid-angular>
+      </div>
+      <div class="col-md-12" *ngIf="showJourney" [hidden]="trackerId === ''">
+        <button type="button" class="btn btn-primary atButton" style="margin-left: 15px;"
+          (click)="onExportTrackerClick()">Export</button>
+        <ag-grid-angular style="width:calc(100% - 30px); height: 500px; margin-left: 15px;" class="ag-theme-balham"
+          [pagination]="true" [enableCellTextSelection]="true" [rowData]="trackerIdData" [gridOptions]="gridOptions1"
+          [rowSelection]="rowSelection" (selectionChanged)="onSelectionChanged($event)"
+          (filterChanged)="onFilterChanged($event)">
+        </ag-grid-angular>
+      </div>
+    </div>
+  </div>
+</div>
