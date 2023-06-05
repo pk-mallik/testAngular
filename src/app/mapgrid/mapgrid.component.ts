@@ -205,6 +205,9 @@ mapTypeList: any = [
   onZoomChange(event: any){
     this.zoom = event;
   }
+
+  abc: any = "abc";
+
   changeMapType(mapType: any) {
     console.log(mapType.target.value);
     this.selectedMapType = mapType.target.value;
